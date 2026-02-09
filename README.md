@@ -47,192 +47,103 @@ The main objectives of this project are:
 
 ### Users Table
 ```sql
-CREATE TABLE users (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  username VARCHAR(100) UNIQUE,
-  password VARCHAR(255),
-  role ENUM('admin','user','manager'),
-  department VARCHAR(50),
-  status ENUM('active','inactive') DEFAULT 'active'
-);
+## 🗄️ Explanation of Columns
 
-Explanation of Columns
+- **id** – Unique identifier for each user  
+- **username** – Unique login name  
+- **password** – Hashed password  
+- **role** – Determines user permissions  
+- **department** – Used for attribute-based access  
+- **status** – Active or inactive user  
 
-id – Unique identifier for each user
+---
 
-username – Unique login name
+## 🔑 Functional Requirements
 
-password – Hashed password
+### ✅ Step 4: User Registration
+- Endpoint: `POST /register`  
+- Accepts:
+  - username  
+  - password  
+  - role (admin / user / manager)  
+  - department  
+- Hashes password using bcrypt before storing  
+- Ensures username is unique  
 
-role – Determines user permissions
+---
 
-department – Used for attribute-based access
+### ✅ Step 5: Login and JWT Issuing
+- Endpoint: `POST /login`  
+- Fetches user from database by username  
+- Compares entered password with stored hashed password  
+- If valid:
+  - Generates JWT token  
+  - Token contains:
+    - user ID  
+    - role  
+    - department  
+  - Token has expiration time  
 
-status – Active or inactive user
+---
 
-🔑 Functional Requirements
-Step 4: User Registration
+### ✅ Step 6: Authentication Middleware
+- Reads JWT from Authorization header  
+- Verifies token signature  
+- Checks token expiration  
+- Decodes token payload  
+- Attaches decoded user data to request object  
 
-Endpoint: POST /register
+---
 
-Accepts:
+### ✅ Step 7: Role-Based Access Control (RBAC)
+- Restricts routes based on user role  
+- Examples:
+  - Admin-only routes  
+  - Admin and Manager routes  
+  - Public authenticated routes  
 
-username
+---
 
-password
+### ✅ Step 8: Attribute-Based Access Control (ABAC)
+- Uses user attributes from JWT (department)  
+- Example rules:
+  - Finance users can access finance resources  
+  - IT users can access IT tools  
 
-role (admin / user / manager)
+---
 
-department
+### ✅ Step 9: Resource Ownership (ABAC)
+- Users can only access their own data  
+- Admin can access all users’ data  
+- Compares:
+  - Token user ID  
+  - Requested resource ID  
 
-Hashes password using bcrypt before storing
+---
 
-Ensures username is unique
-
-Step 5: Login and JWT Issuing
-
-Endpoint: POST /login
-
-Fetches user from database by username
-
-Compares entered password with stored hashed password
-
-If valid:
-
-Generates JWT token
-
-Token contains:
-
-user ID
-
-role
-
-department
-
-Token has expiration time
-
-Step 6: Authentication Middleware
-
-Reads JWT from Authorization header
-
-Verifies token signature
-
-Checks token expiration
-
-Decodes token payload
-
-Attaches decoded user data to request object
-
-Step 7: Role-Based Access Control (RBAC)
-
-Restricts routes based on user role
-
-Examples:
-
-Admin-only routes
-
-Admin and Manager routes
-
-Public authenticated routes
-
-Step 8: Attribute-Based Access Control (ABAC)
-
-Uses user attributes from JWT (department)
-
-Example rules:
-
-Finance users can access finance resources
-
-IT users can access IT tools
-
-Step 9: Resource Ownership (ABAC)
-
-Users can only access their own data
-
-Admin can access all users’ data
-
-Compares:
-
-Token user ID
-
-Requested resource ID
-
-Step 10: Custom Authorization Rules
-
+### ✅ Step 10: Custom Authorization Rules
 Business-specific rules implemented:
+- Allow access only during working hours  
+- Block inactive users  
+- Combine role + attribute + time rules  
+- Provide clear error messages  
 
-Allow access only during working hours
+---
 
-Block inactive users
+## 🔐 Security Features
+- Password hashing using bcrypt  
+- JWT token expiration  
+- Role-based route protection  
+- Attribute-based route protection  
+- Ownership validation  
+- Middleware-based security  
 
-Combine role + attribute + time rules
+---
 
-Provide clear error messages
+## ▶ How to Run the Project
 
-🔐 Security Features
-
-Password hashing using bcrypt
-
-JWT token expiration
-
-Role-based route protection
-
-Attribute-based route protection
-
-Ownership validation
-
-Middleware-based security
-
-▶ How to Run the Project
-1. Clone Repository
+### 1. Clone Repository
+```bash
 git clone https://github.com/YOUR_USERNAME/authentication-authorization-system.git
-
-2. Install Dependencies
-npm install
-
-3. Create Database
-CREATE DATABASE auth_system;
-USE auth_system;
-
-4. Start Server
-node server.js
-
-🧪 API Endpoints
-Method	Endpoint	Description
-POST	/register	Register new user
-POST	/login	Login and receive JWT
-GET	/admin	Admin-only route
-GET	/manager	Admin & Manager route
-GET	/finance	Finance department route
-GET	/users/:id	Resource ownership
-GET	/secure-data	Custom rule route
-📂 Project Structure
-auth-system/
- ├── db.js
- ├── server.js
- ├── package.json
- ├── README.md
-🧠 Learning Outcomes
-
-Understood authentication vs authorization
-
-Implemented secure password storage
-
-Learned JWT-based authentication
-
-Applied RBAC and ABAC models
-
-Built reusable middleware
-
-Designed business authorization rules
-Screenshots;<img width="960" height="540" alt="Screenshot 2026-02-09 144452" src="https://github.com/user-attachments/assets/70404711-5dfc-4f5a-8fd1-cc8204bb9966" />
-<img width="960" height="540" alt="Screenshot 2026-02-09 144523" src="https://github.com/user-attachments/assets/7edcf7b9-dd6f-4ea3-8b99-e21f34fccece" />
-<img width="960" height="540" alt="Screenshot 2026-02-09 144523" src="https://github.com/user-attachments/assets/7edcf7b9-dd6f-4ea3-8b99-e21f34fccece" />
-<img width="960" height="540" alt="Screenshot 2026-02-09 144325" src="https://github.com/user-attachments/assets/11df195f-29c9-451d-801b-2cf44f1d3924" />
-<img width="960" height="540" alt="Screenshot 2026-02-09 144325" src="https://github.com/user-attachments/assets/11df195f-29c9-451d-801b-2cf44f1d3924" />
-<img width="960" height="540" alt="Screenshot 2026-02-09 144619" src="https://github.com/user-attachments/assets/8f3fc623-c559-4fb7-8579-a68afdb1b940" />
-<img width="960" height="540" alt="Screenshot 2026-02-09 144619" src="https://github.com/user-attachments/assets/8f3fc623-c559-4fb7-8579-a68afdb1b940" />
-Author
-
-Ineza Jesca
-Software Development Student
+Author;INEZA Jessica
+Software Development
